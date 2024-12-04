@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProjectGroupRepository::class)]
-#[ORM\Table(name: 'projectGroup')]
+#[ORM\Table(name: 'project_group')]
 class ProjectGroup
 {
     #[ORM\Id]
@@ -19,7 +19,7 @@ class ProjectGroup
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'groups')]
+    #[ORM\ManyToOne(inversedBy: 'projectGroups')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Project $project = null;
 
