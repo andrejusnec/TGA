@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create New Project{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-primary mb-4 text-center">Create New Project</h1>
+
+        <div class="card p-4 shadow-sm mx-auto" style="max-width: 600px;">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn btn-primary w-100 mt-3">Save</button>
+            {{ form_end(form) }}
+        </div>
+
+        <div class="text-center mt-3">
+            <a href="{{ path('app_project_index') }}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+{% endblock %}
