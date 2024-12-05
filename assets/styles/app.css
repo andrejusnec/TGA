@@ -1,3 +1,16 @@
 body {
-    background-color: skyblue;
+    background-color: #f8f9fa;
+    color: #212529;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    margin-bottom: 1rem;
+    color: #007bff; /* Bootstrap Primary Color */
+}
+
+.container {
+    padding-top: 20px;
 }

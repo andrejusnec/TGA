@@ -5,10 +5,11 @@ namespace App\Entity;
 use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
-class Project
+class Project implements ProjectInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,12 +17,15 @@ class Project
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $title = null;
 
     #[ORM\Column]
+    #[Assert\Positive]
     private ?int $amountOfGroups = null;
 
     #[ORM\Column]
+    #[Assert\Positive]
     private ?int $maxStudentsPerGroup = null;
 
     #[ORM\OneToMany(targetEntity: ProjectGroup::class, mappedBy: 'project', orphanRemoval: true)]
