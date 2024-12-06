@@ -1,0 +1,53 @@
+{#<table class="table table-bordered">#}
+{#    <thead>#}
+{#    <tr>#}
+{#        <th>Student</th>#}
+{#        <th>Group</th>#}
+{#        <th>Actions</th>#}
+{#    </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{#    {% for group in project.groups %}#}
+{#        {% for student in group.students %}#}
+{#            <tr>#}
+{#                <td>{{ student.fullName }}</td>#}
+{#                <td>{{ group.name }}</td>#}
+{#                <td>#}
+{#                    <button class="btn btn-outline-danger btn-sm remove-student-btn"#}
+{#                            data-student-id="{{ student.id }}"#}
+{#                            data-group-id="{{ group.id }}">#}
+{#                        &times;#}
+{#                    </button>#}
+{#                </td>#}
+{#            </tr>#}
+{#        {% endfor %}#}
+{#    {% endfor %}#}
+{#    </tbody>#}
+{#</table>#}
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Student</th>
+        <th>Group</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for student in students %}
+        <tr id="student-row-{{ student.id }}">
+            <td>{{ student.fullName }}</td>
+            <td class="student-group">
+                {{ student.projectGroup ? student.projectGroup.name : '-' }}
+            </td>
+            <td>
+                <button class="btn btn-outline-danger btn-sm remove-student-btn"
+                        data-student-id="{{ student.id }}"
+                        data-group-id="{{ student.projectGroup ? student.projectGroup.id : '' }}">
+                    &times;
+                </button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+

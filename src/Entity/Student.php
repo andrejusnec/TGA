@@ -44,6 +44,11 @@ class Student
         return $this->surname;
     }
 
+    public function getFullName(): string
+    {
+        return $this->name . ' ' . $this->surname;
+    }
+
     public function setSurname(?string $surname): static
     {
         $this->surname = $surname;

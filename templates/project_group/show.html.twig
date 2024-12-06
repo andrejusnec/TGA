@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ProjectGroup{% endblock %}
+
+{% block body %}
+    <h1>ProjectGroup</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ project_group.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_project_group_index') }}">back to list</a>
+
+    <a href="{{ path('app_project_group_edit', {'id': project_group.id}) }}">edit</a>
+
+    {{ include('project_group/_delete_form.html.twig') }}
+{% endblock %}

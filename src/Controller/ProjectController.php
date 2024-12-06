@@ -9,6 +9,7 @@ use App\Event\ProjectCreatedEvent;
 use App\Factory\ProjectFactoryInterface;
 use App\Form\ProjectType;
 use App\Repository\ProjectRepository;
+use App\Repository\StudentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -22,9 +23,14 @@ class ProjectController extends AbstractController
     #[Route(name: 'app_project_index', methods: ['GET'])]
     public function index(ProjectRepository $projectRepository): Response
     {
-        return $this->render('project/index.html.twig', [
-            'projects' => $projectRepository->findAll(),
-        ]);
+        $projects = $projectRepository->findAll();
+        if (count($projects) > 0) {
+            return $this->render('project/index.html.twig', [
+                'projects' => $projectRepository->findAll(),
+            ]);
+        }
+
+        return $this->redirectToRoute('app_project_new');
     }
 
     #[Route('/new', name: 'app_project_new', methods: ['GET', 'POST'])]
@@ -94,10 +100,11 @@ class ProjectController extends AbstractController
     }
 
     #[Route('/{id}/status', name: 'app_project_status', methods: ['GET'])]
-    public function status(Project $project): Response
+    public function status(Project $project, StudentRepository $studentRepository): Response
     {
         return $this->render('project/status.html.twig', [
             'project' => $project,
+            'students' => $studentRepository->findAll(),
         ]);
     }
 }
