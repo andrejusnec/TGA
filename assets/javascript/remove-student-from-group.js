@@ -9,17 +9,14 @@ function handleStudentRemoval() {
 }
 
 function removeStudent(removeUrl, studentId, groupId, studentList, button) {
-    toggleLoadingState(button, true); // Disable button
+    toggleLoadingState(button, true);
     $.ajax({
         url: removeUrl,
         method: 'POST',
         headers: { 'X-Requested-With': 'XMLHttpRequest' },
         data: { student: studentId },
         success: function (data) {
-            handleAjaxResponse(data, function () {
-                handleRemovalSuccess(studentId, groupId, studentList, button, data.studentName);
-                updateStudentListAfterRemoval(studentId);
-            });
+            handleRemovalSuccess(studentId, groupId, studentList, button, data);
         },
         error: function (error) {
             console.error("Error:", error);
@@ -31,18 +28,38 @@ function removeStudent(removeUrl, studentId, groupId, studentList, button) {
     });
 }
 
-function handleRemovalSuccess(studentId, groupId, studentList, button, studentName) {
+function handleRemovalSuccess(studentId, groupId, studentList, button, data) {
     button.closest('li').remove();
 
-    addStudentBackToDropdowns(studentId, studentName);
+    addStudentBackToDropdowns(studentId, data.studentName);
 
     if (studentList.children('li').length === 0) {
         studentList.append(createNoStudentsMessage());
     }
+
+    updateGroupCapacity(groupId, data.currentStudentCount, data.maxStudentsPerGroup);
 }
 
+function updateGroupCapacity(groupId, currentStudentCount, maxStudentsPerGroup) {
+
+    const dropdownContainer = $(`#group-${groupId}-dropdown-container`);
+    const groupFullMessage = $(`#group-${groupId}-full-message`);
+
+    if (currentStudentCount < maxStudentsPerGroup) {
+        dropdownContainer.show();
+        groupFullMessage.hide();
+    } else {
+        console.log("Hiding dropdown, showing 'Group is full' message.");
+        dropdownContainer.hide();
+        groupFullMessage.text('This group is full').show();
+    }
+}
+
+
 function createNoStudentsMessage() {
-    return $('<li>').addClass('list-group-item text-muted').text('No students assigned yet.');
+    return $('<li>')
+        .addClass('list-group-item text-muted')
+        .text('No students assigned yet.');
 }
 
 function addStudentBackToDropdowns(studentId, studentName) {
@@ -51,11 +68,6 @@ function addStudentBackToDropdowns(studentId, studentName) {
             $(this).append(new Option(studentName, studentId));
         }
     });
-}
-
-function updateStudentListAfterRemoval(studentId) {
-    const studentRow = $(`#student-row-${studentId}`);
-    studentRow.find('.student-group').text('-');
 }
 
 function toggleLoadingState(button, isLoading) {
@@ -73,10 +85,3 @@ function showError(message) {
     setTimeout(() => errorContainer.fadeOut(), 5000);
 }
 
-function handleAjaxResponse(data, successCallback) {
-    if (data.success) {
-        successCallback();
-    } else {
-        showError(data.message);
-    }
-}

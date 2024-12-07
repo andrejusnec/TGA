@@ -46,8 +46,14 @@ final class ProjectGroupController extends AbstractController
     {
         $studentId = (int) $request->request->get('student');
 
-        $result = $this->projectGroupService->removeStudentFromGroup($studentId, $groupId);
+        $responseData = $this->projectGroupService->removeStudentAndUpdateGroup($studentId, $groupId);
 
-        return new JsonResponse($result, $result['success'] ? 200 : 400);
+        return $this->json([
+            'success' => true,
+            'studentId' => $responseData['studentId'],
+            'studentName' => $responseData['studentName'],
+            'currentStudentCount' => $responseData['currentStudentCount'],
+            'maxStudentsPerGroup' => $responseData['maxStudentsPerGroup'],
+        ]);
     }
 }
