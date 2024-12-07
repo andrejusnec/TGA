@@ -1,4 +1,5 @@
 parameters:
+    student_pagination_limit: 5
 
 services:
     _defaults:
@@ -21,3 +22,8 @@ services:
             $projectGroupFactory: '@App\Factory\ProjectGroupFactoryInterface'
         tags:
             - { name: kernel.event_listener, event: App\Event\ProjectCreatedEvent, method: "onProjectCreate" }
+
+    App\Service\StudentServiceInterface:
+        class: 'App\Service\StudentService'
+        arguments:
+             $studentPaginationLimit: '%student_pagination_limit%'

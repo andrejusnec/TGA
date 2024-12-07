@@ -10,6 +10,4 @@ use App\Entity\ProjectInterface;
 interface ProjectGroupFactoryInterface
 {
     public function createProjectGroupsForProject(ProjectInterface $project): array;
-
-    public function createProjectGroup(ProjectInterface $project): ProjectGroup;
 }

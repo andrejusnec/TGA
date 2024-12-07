@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ProjectRepository;
@@ -28,7 +30,8 @@ class Project implements ProjectInterface
     #[Assert\Positive]
     private ?int $maxStudentsPerGroup = null;
 
-    #[ORM\OneToMany(targetEntity: ProjectGroup::class, mappedBy: 'project', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ProjectGroup::class, mappedBy: 'project', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Collection $projectGroups;
 
     public function __construct()

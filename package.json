@@ -22,6 +22,8 @@
     "webpack-notifier": "^1.15.0"
   },
   "dependencies": {
-    "bootstrap": "^5.3.3"
+    "bootstrap": "^5.3.3",
+    "core-js": "^3.39.0",
+    "jquery": "^3.7.1"
   }
 }

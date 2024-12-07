@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ProjectGroupFactory implements ProjectGroupFactoryInterface
 {
+    public const DEFAULT_GROUP_NAME = 'Group';
     public function __construct(public readonly EntityManagerInterface $entityManager)
     {
     }
@@ -17,17 +18,18 @@ class ProjectGroupFactory implements ProjectGroupFactoryInterface
     public function createProjectGroupsForProject(ProjectInterface $project): array
     {
         $groups = [];
-        for ($i = 0; $i < $project->getAmountOfGroups(); $i++) {
-            $groups[] = $this->createProjectGroup($project);
+        for ($i = 1; $i <= $project->getAmountOfGroups(); $i++) {
+            $groups[] = $this->createProjectGroup($project, $i);
         }
 
         return $groups;
     }
 
-    public function createProjectGroup(ProjectInterface $project): ProjectGroup
+    private function createProjectGroup(ProjectInterface $project, int $iteration): ProjectGroup
     {
         $group = new ProjectGroup();
         $group->setProject($project);
+        $group->setName(self::DEFAULT_GROUP_NAME . ' #' . $iteration);
 
         return $group;
     }

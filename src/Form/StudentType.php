@@ -9,14 +9,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProjectType extends AbstractType
+class StudentType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title')
-            ->add('amountOfGroups')
-            ->add('maxStudentsPerGroup')
+            ->add('name')
+            ->add('surname')
         ;
     }
 

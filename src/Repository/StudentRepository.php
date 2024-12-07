@@ -1,43 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Student;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Student>
- */
-class StudentRepository extends ServiceEntityRepository
+class StudentRepository extends ServiceEntityRepository implements StudentRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Student::class);
     }
 
-    //    /**
-    //     * @return Student[] Returns an array of Student objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getPaginatedStudents(int $page, int $limit = 10): array
+    {
+        $queryBuilder = $this->createQueryBuilder('student');
 
-    //    public function findOneBySomeField($value): ?Student
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $queryBuilder
+            ->setMaxResults($limit)
+            ->setFirstResult(($page - 1) * $limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countTotalStudents(): int
+    {
+        return $this->createQueryBuilder('student')
+            ->select('COUNT(student.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

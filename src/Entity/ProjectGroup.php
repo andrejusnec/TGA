@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ProjectGroupRepository;
@@ -19,6 +21,9 @@ class ProjectGroup
     #[ORM\ManyToOne(inversedBy: 'projectGroups')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Project $project = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
 
     /**
      * @var Collection<int, Student>
@@ -44,6 +49,18 @@ class ProjectGroup
     public function setProject(?Project $project): static
     {
         $this->project = $project;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }
