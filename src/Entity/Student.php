@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\StudentRepository;
@@ -19,7 +21,8 @@ class Student
     #[ORM\Column(length: 255)]
     private ?string $surname = null;
 
-    #[ORM\ManyToOne(inversedBy: 'students')]
+    #[ORM\ManyToOne(targetEntity: ProjectGroup::class, inversedBy: 'students')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?ProjectGroup $projectGroup = null;
 
     public function getId(): ?int

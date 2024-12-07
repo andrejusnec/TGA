@@ -1,171 +1,83 @@
-// $(document).on('submit', '.assign-student-form', handleStudentAssignment);
-//
-// function handleStudentAssignment(e) {
-//     e.preventDefault();
-//
-//     const form = $(e.currentTarget);
-//     const groupId = form.data('group-id');
-//     const assignUrl = form.data('assign-url');
-//     const studentSelect = form.find('.student-select');
-//     const studentId = studentSelect.val();
-//     const studentName = studentSelect.find('option:selected').text();
-//
-//     if (!validateStudentSelection(studentId)) {
-//         return;
-//     }
-//
-//     assignStudent(assignUrl, studentId, groupId, studentName);
-// }
-//
-// function validateStudentSelection(studentId) {
-//     if (!studentId) {
-//         alert("Please select a student.");
-//         return false;
-//     }
-//     return true;
-// }
-//
-// function assignStudent(assignUrl, studentId, groupId, studentName) {
-//     $.ajax({
-//         url: assignUrl,
-//         method: 'POST',
-//         headers: {
-//             'X-Requested-With': 'XMLHttpRequest',
-//         },
-//         data: {
-//             student: studentId,
-//         },
-//         success: function (data) {
-//             if (data.success) {
-//                 handleAssignmentSuccess(studentId, groupId, studentName);
-//             } else {
-//                 alert(data.message);
-//             }
-//         },
-//         error: function (error) {
-//             console.error("There was an error assigning the student:", error);
-//             alert("An error occurred. Please try again.");
-//         }
-//     });
-// }
-//
-// function handleAssignmentSuccess(studentId, groupId, studentName) {
-//     removeStudentFromAllSelects(studentId);
-//
-//     const studentList = $('#group-' + groupId + '-students');
-//     removeNoStudentsMessage(studentList);
-//     addStudentToList(studentList, studentId, groupId, studentName);
-// }
-//
-// function removeNoStudentsMessage(studentList) {
-//     studentList.find('li.text-muted').remove();
-// }
-//
-// function removeStudentFromAllSelects(studentId) {
-//     $('.student-select option[value="' + studentId + '"]').remove();
-// }
-//
-// function addStudentToList(studentList, studentId, groupId, studentName) {
-//     const newStudentItem = $('<li>')
-//         .addClass('list-group-item d-flex justify-content-between align-items-center')
-//         .attr('id', `group-${groupId}-student-${studentId}`);
-//
-//     const studentSpan = $('<span>').text(studentName);
-//     const removeButton = $('<button>')
-//         .addClass('btn btn-outline-danger btn-sm remove-student-btn')
-//         .text('×')
-//         .data('student-id', studentId)
-//         .data('group-id', groupId);
-//
-//     newStudentItem.append(studentSpan, removeButton);
-//     studentList.append(newStudentItem);
-// }
-$(document).on('submit', '.assign-student-form', handleStudentAssignment);
+$(document).on('change', '.student-select', function () {
+    const dropdown = $(this);
+    const studentId = dropdown.val();
+    const groupId = dropdown.data('group-id');
+    const assignUrl = dropdown.data('assign-url');
+    const studentName = dropdown.find('option:selected').text();
 
-function handleStudentAssignment(e) {
-    e.preventDefault();
+    if (!studentId) return;
 
-    const form = $(e.currentTarget);
-    const groupId = form.data('group-id');
-    const assignUrl = form.data('assign-url');
-    const studentSelect = form.find('.student-select');
-    const studentId = studentSelect.val();
-    const studentName = studentSelect.find('option:selected').text();
+    toggleDropdownState(dropdown, true);
 
-    if (!validateStudentSelection(studentId)) {
-        return;
-    }
-
-    assignStudent(assignUrl, studentId, groupId, studentName);
-}
-
-function validateStudentSelection(studentId) {
-    if (!studentId) {
-        alert("Please select a student.");
-        return false;
-    }
-    return true;
-}
-
-function assignStudent(assignUrl, studentId, groupId, studentName) {
     $.ajax({
         url: assignUrl,
         method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-        },
-        data: {
-            student: studentId,
-        },
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        data: { student: studentId, group: groupId },
         success: function (data) {
             if (data.success) {
-                handleAssignmentSuccess(studentId, groupId, studentName);
-                updateStudentList(studentId, groupId);
+                handleAssignmentSuccess(studentId, groupId, studentName, dropdown);
+                updateStudentList(studentId, groupId, data.groupName);
             } else {
-                alert(data.message);
+                showError(data.message);
+                resetDropdownSelection(dropdown);
             }
         },
-        error: function (error) {
-            console.error("There was an error assigning the student:", error);
-            alert("An error occurred. Please try again.");
+        error: function () {
+            showError("An unexpected error occurred. Please try again.");
+            resetDropdownSelection(dropdown);
+        },
+        complete: function () {
+            toggleDropdownState(dropdown, false);
         }
     });
+});
+
+function handleAssignmentSuccess(studentId, groupId, studentName, dropdown) {
+    const studentList = $(`#group-${groupId}-students`);
+    studentList.find('.text-muted').remove();
+    addStudentToGroupList(studentId, groupId, studentName);
+    removeStudentFromAllDropdowns(studentId);
+    resetDropdownSelection(dropdown);
 }
 
-function handleAssignmentSuccess(studentId, groupId, studentName) {
-    removeStudentFromAllSelects(studentId);
-
-    const studentList = $('#group-' + groupId + '-students');
-    removeNoStudentsMessage(studentList);
-    addStudentToList(studentList, studentId, groupId, studentName);
-}
-
-function removeNoStudentsMessage(studentList) {
-    studentList.find('li.text-muted').remove();
-}
-
-function removeStudentFromAllSelects(studentId) {
-    $('.student-select option[value="' + studentId + '"]').remove();
-}
-
-function addStudentToList(studentList, studentId, groupId, studentName) {
+function addStudentToGroupList(studentId, groupId, studentName) {
+    const studentList = $(`#group-${groupId}-students`);
     const newStudentItem = $('<li>')
         .addClass('list-group-item d-flex justify-content-between align-items-center')
         .attr('id', `group-${groupId}-student-${studentId}`);
-
     const studentSpan = $('<span>').text(studentName);
     const removeButton = $('<button>')
         .addClass('btn btn-outline-danger btn-sm remove-student-btn')
-        .text('×')
-        .data('student-id', studentId)
-        .data('group-id', groupId);
-
+        .attr('data-student-id', studentId)
+        .attr('data-group-id', groupId)
+        .text('×');
     newStudentItem.append(studentSpan, removeButton);
     studentList.append(newStudentItem);
 }
 
-// Update the student list dynamically
-function updateStudentList(studentId, groupId) {
-    const studentRow = $(`#student-row-${studentId}`);
-    studentRow.find('.student-group').text(`Group #${groupId}`);
+function removeStudentFromAllDropdowns(studentId) {
+    $(`.student-select option[value="${studentId}"]`).remove();
 }
+
+function resetDropdownSelection(dropdown) {
+    dropdown.val('');
+}
+
+function toggleDropdownState(dropdown, isDisabled) {
+    dropdown.prop('disabled', isDisabled);
+}
+
+function updateStudentList(studentId, groupId, groupName) {
+    const studentRow = $(`#student-row-${studentId}`);
+    const groupCell = studentRow.find('.student-group');
+    groupCell.text(groupName || '-');
+}
+
+function showError(message) {
+    const errorContainer = $('#error-container');
+    errorContainer.html(`<div class="alert alert-danger">${message}</div>`);
+    errorContainer.fadeIn();
+    setTimeout(() => errorContainer.fadeOut(), 5000);
+}
+

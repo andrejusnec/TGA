@@ -2,75 +2,103 @@
 
 {% block body %}
     <div class="container my-5">
-        <h1>Project: <strong>{{ project.title }}</strong></h1>
-        <p><strong>Number of Groups:</strong> {{ project.amountOfGroups }}</p>
-        <p><strong>Students per Group:</strong> {{ project.maxStudentsPerGroup }}</p>
+        <h1 class="mb-4">
+            Project: <strong>{{ project.title }}</strong>
+        </h1>
+        <p>
+            <strong>Number of Groups:</strong> {{ project.amountOfGroups }}
+        </p>
+        <p>
+            <strong>Students per Group:</strong> {{ project.maxStudentsPerGroup }}
+        </p>
+        <div class="mb-4">
+            <a href="{{ path('app_project_index') }}" class="btn btn-outline-secondary">
+                ← Back to Project List
+            </a>
+        </div>
 
-        <hr>
-        <!-- Students Section -->
-        <h3>Students</h3>
-        {% if project.groups is not empty %}
-            {% include 'student/student_list.html.twig' with { 'id' : project.id, 'students' : students } %}
-            <a href="{{ path('app_student_new', {'projectId': project.id}) }}" class="btn btn-outline-primary">Add new student</a>
-        {% else %}
-            <p class="text-muted">No groups available for this project.</p>
-        {% endif %}
-        <hr>
+        <hr class="my-4">
 
-        <!-- Groups Section -->
-        <h3>Groups</h3>
-        <div class="row">
-            {% for group in project.groups %}
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            {{ group.name }}
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group mb-3" id="group-{{ group.id }}-students"
+        <section>
+            <h3 class="mb-3">Students</h3>
+            {% if project.groups is not empty %}
+                {% include 'student/student_list.html.twig' with { 'id': project.id, 'students': students } %}
+
+                <nav aria-label="Student Pagination">
+                    <ul class="pagination justify-content-center">
+                        {% for page in 1..totalPages %}
+                            <li class="page-item {{ page == currentPage ? 'active' : '' }}">
+                                <a class="page-link" href="{{ path('app_project_status', {'id': project.id, 'page': page}) }}">
+                                    {{ page }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+
+                <a href="{{ path('app_student_new', {'projectId': project.id}) }}" class="btn btn-outline-primary">
+                    Add new student
+                </a>
+            {% else %}
+                <p class="text-muted">No groups available for this project.</p>
+            {% endif %}
+        </section>
+
+        <hr class="my-4">
+
+        <section>
+            <h3 class="mb-3">Groups</h3>
+            <div class="row">
+                {% for group in project.groups %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header text-center fw-bold">
+                                {{ group.name }}
+                            </div>
+                            <ul class="list-group list-group-flush"
+                                id="group-{{ group.id }}-students"
                                 data-remove-url="{{ path('app_group_remove_student', {'groupId': group.id}) }}">
-                                {% for student in group.students %}
-                                    <li class="list-group-item d-flex justify-content-between"
-                                        id="group-{{ group.id }}-student-{{ student.id }}">
-                                        <span>{{ student.fullName }}</span>
-                                        <button class="btn btn-outline-danger btn-sm remove-student-btn"
-                                                data-student-id="{{ student.id }}"
-                                                data-group-id="{{ group.id }}"
-                                                aria-label="Remove student">
-                                            &times;
-                                        </button>
-                                    </li>
+                                {% if group.students is empty %}
+                                    <li class="list-group-item text-muted small">No students assigned yet.</li>
                                 {% else %}
-                                    <li class="list-group-item text-muted">No students assigned yet.</li>
-                                {% endfor %}
+                                    {% for student in group.students %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span class="small">{{ student.fullName }}</span>
+                                            <button class="btn btn-outline-danger btn-sm remove-student-btn"
+                                                    data-student-id="{{ student.id }}"
+                                                    data-group-id="{{ group.id }}">
+                                                &times;
+                                            </button>
+                                        </li>
+                                    {% endfor %}
+                                {% endif %}
                             </ul>
+                            <div class="card-body">
+                                <div class="d-flex flex-column">
+                                    <label>
+                                        <select name="student"
+                                                class="form-select w-100 student-select"
+                                                data-group-id="{{ group.id }}"
+                                                data-assign-url="{{ path('app_group_assign_student', {'groupId': group.id}) }}">
+                                            <option value="">Select a student...</option>
+                                            {% for student in allStudents %}
+                                                {% if student.projectGroup is empty %}
+                                                    <option value="{{ student.id }}">{{ student.fullName }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
 
-                            {% if group.students|length < project.maxStudentsPerGroup %}
-                                <form method="post" class="assign-student-form"
-                                      data-group-id="{{ group.id }}"
-                                      data-assign-url="{{ path('app_group_assign_student', {'groupId': group.id}) }}">
-                                    <div class="input-group">
-                                        <label>
-                                            <select name="student" class="form-select student-select"
-                                                    data-group-id="{{ group.id }}" required>
-                                                <option value="">Assign student...</option>
-                                                {% for student in students %}
-                                                    {% if student.projectGroup is empty %}
-                                                        <option value="{{ student.id }}">{{ student.fullName }}</option>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </select>
-                                        </label>
-                                        <button type="submit" class="btn btn-success">Assign</button>
-                                    </div>
-                                </form>
-                            {% endif %}
                         </div>
                     </div>
-                </div>
-            {% else %}
-                <p class="text-muted">No groups available.</p>
-            {% endfor %}
-        </div>
+                {% else %}
+                    <p class="text-muted text-center">No groups available.</p>
+                {% endfor %}
+            </div>
+        </section>
     </div>
 {% endblock %}
+
+
