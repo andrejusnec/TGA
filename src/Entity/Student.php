@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\StudentRepository;
+use App\Validator\UniqueNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StudentRepository::class)]
+#[UniqueNameConstraint]
 class Student
 {
     #[ORM\Id]
@@ -16,9 +19,23 @@ class Student
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: 'Name must be at least {{ limit }} characters long',
+        maxMessage: 'Name value is too long. It should have {{ limit }} characters or less.',
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: 'Surname must be at least {{ limit }} characters long',
+        maxMessage: 'Surname value is too long. It should have {{ limit }} characters or less.',
+    )]
     private ?string $surname = null;
 
     #[ORM\ManyToOne(targetEntity: ProjectGroup::class, inversedBy: 'students')]

@@ -27,3 +27,12 @@ services:
         class: 'App\Service\StudentService'
         arguments:
              $studentPaginationLimit: '%student_pagination_limit%'
+
+    App\Validator\UniqueNameValidator:
+        arguments:
+            $studentRepository: '@App\Repository\StudentRepository'
+        tags: [ 'validator.constraint_validator' ]
+
+    App\EventListener\ApiExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
