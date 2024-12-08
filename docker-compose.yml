@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./public:/var/www/html/public:cached
+      - ./node_modules:/var/www/html/node_modules:cached
+      - ./config:/var/www/html/config:cached
+    environment:
+      APP_ENV: dev
+      DATABASE_URL: mysql://root:root@db:3306/TGA
+    depends_on:
+      - db
+    networks:
+      - symfony
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html/public:cached
+      - ./config:/var/www/html/config:cached
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - symfony
+
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: TGA
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - symfony
+
+networks:
+  symfony:
+
+volumes:
+  db_data:
