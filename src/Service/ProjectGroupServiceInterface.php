@@ -8,5 +8,5 @@ interface ProjectGroupServiceInterface
 {
     public function assignStudentToGroup(int $studentId, int $groupId): array;
 
-    public function removeStudentFromGroup(int $studentId, int $groupId): array;
+    public function removeStudentAndUpdateGroup(int $studentId, int $groupId): array;
 }

@@ -14,10 +14,11 @@
                 {{ student.projectGroup ? student.projectGroup.name : '-' }}
             </td>
             <td>
-                <button class="btn btn-outline-danger btn-sm remove-student-btn"
+                <button
+                        class="btn btn-danger btn-sm delete-student"
                         data-student-id="{{ student.id }}"
-                        data-group-id="{{ student.projectGroup ? student.projectGroup.id : '' }}">
-                    &times;
+                >
+                    Delete
                 </button>
             </td>
         </tr>

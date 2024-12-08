@@ -18,6 +18,7 @@ $(document).on('change', '.student-select', function () {
             if (data.success) {
                 handleAssignmentSuccess(studentId, groupId, studentName, dropdown);
                 updateStudentList(studentId, groupId, data.groupName);
+                checkGroupCapacity(groupId);
             } else {
                 showError(data.message);
                 resetDropdownSelection(dropdown);
@@ -32,6 +33,22 @@ $(document).on('change', '.student-select', function () {
         }
     });
 });
+
+function checkGroupCapacity(groupId) {
+    const groupContainer = $(`#group-${groupId}-students`);
+    const dropdownContainer = $(`#group-${groupId}-dropdown-container`);
+    const groupFullMessage = $(`#group-${groupId}-full-message`);
+
+    $.get(`/api/groups/${groupId}/students`, function (data) {
+        if (data.students >= data.maxStudentsPerGroup) {
+            dropdownContainer.hide();
+            groupFullMessage.text('This group is full').show();
+        } else {
+            dropdownContainer.show();
+            groupFullMessage.hide();
+        }
+    });
+}
 
 function handleAssignmentSuccess(studentId, groupId, studentName, dropdown) {
     const studentList = $(`#group-${groupId}-students`);
@@ -80,4 +97,3 @@ function showError(message) {
     errorContainer.fadeIn();
     setTimeout(() => errorContainer.fadeOut(), 5000);
 }
-
