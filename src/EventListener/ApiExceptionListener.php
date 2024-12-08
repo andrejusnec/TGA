@@ -7,6 +7,7 @@ namespace App\EventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
 class ApiExceptionListener
 {
@@ -17,12 +18,23 @@ class ApiExceptionListener
         if ($exception instanceof HttpExceptionInterface) {
             $response = new JsonResponse(
                 [
-                    'errors' => json_decode($exception->getMessage(), true)['errors'] ?? [$exception->getMessage()]
+                    'errors' => $this->formatErrorMessage($exception)
                 ],
                 $exception->getStatusCode()
             );
 
             $event->setResponse($response);
         }
+    }
+
+    private function formatErrorMessage(Throwable $exception): array
+    {
+        $decodedMessage = json_decode($exception->getMessage(), true);
+
+        if (JSON_ERROR_NONE === json_last_error() && isset($decodedMessage['errors'])) {
+            return $decodedMessage['errors'];
+        }
+
+        return [$exception->getMessage()];
     }
 }
