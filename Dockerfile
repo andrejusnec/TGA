@@ -1,6 +1,7 @@
 FROM php:8.1-fpm
 
 RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y git
 RUN docker-php-ext-install mysqli pdo_mysql bcmath
 
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
@@ -16,4 +17,5 @@ RUN npm install && npm run build
 
 RUN mkdir -p /var/www/html/var/log && \
     chown -R www-data:www-data /var/www/html/var/log && \
-    chmod -R 775 /var/www/html/var/log
+    chmod -R 775 /var/www/html/var/log && \
+    git config --global --add safe.directory /var/www/html

@@ -38,6 +38,8 @@ function handleRemovalSuccess(studentId, groupId, studentList, button, data) {
     }
 
     updateGroupCapacity(groupId, data.currentStudentCount, data.maxStudentsPerGroup);
+
+    location.reload();
 }
 
 function updateGroupCapacity(groupId, currentStudentCount, maxStudentsPerGroup) {

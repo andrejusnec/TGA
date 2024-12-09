@@ -1,5 +1,13 @@
 import {showToast} from "./toast";
 
+$(document).ready(function () {
+    const successfulDelete = localStorage.getItem('successfulDelete');
+    if (successfulDelete) {
+        showToast(successfulDelete, 'success');
+        localStorage.removeItem('successfulDelete');
+    }
+});
+
 $(document).on('click', '.delete-student', function () {
     const studentId = $(this).data('student-id');
 
@@ -11,7 +19,7 @@ $(document).on('click', '.delete-student', function () {
         url: `/api/students/${studentId}`,
         type: 'DELETE',
         success: function (data) {
-            showToast('Student deleted successfully.', 'success');
+            localStorage.setItem('successfulDelete', 'Student deleted successfully!');
             location.reload();
         },
         error: function (xhr, data) {
