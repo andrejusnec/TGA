@@ -80,9 +80,8 @@ Built with Symfony 6.4, it uses OOP principles and supports RESTful APIs for som
      ```
 
 4. **Set Up the Database**
-   - Create and migrate the database:
+   - Migrate the database:
     ```bash
-     php bin/console doctrine:database:create
      php bin/console doctrine:migrations:migrate
      ```
 
