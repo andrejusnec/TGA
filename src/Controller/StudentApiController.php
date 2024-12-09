@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Repository\StudentRepositoryInterface;
 use App\Service\StudentServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,5 +40,21 @@ class StudentApiController extends AbstractController
         $studentService->deleteStudent($id);
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/api/students', name: 'api_get_all_students', methods: ['GET'])]
+    public function getAllStudents(StudentRepositoryInterface $studentRepository): JsonResponse
+    {
+        $students = $studentRepository->findAll();
+
+        $response = array_map(function ($student) {
+            return [
+                'id' => $student->getId(),
+                'name' => $student->getName(),
+                'surname' => $student->getSurname(),
+            ];
+        }, $students);
+
+        return new JsonResponse($response, Response::HTTP_OK);
     }
 }

@@ -1,4 +1,12 @@
-import { showToast } from './toast';
+import {showToast} from './toast';
+
+$(document).ready(function () {
+    const successMessage = localStorage.getItem('successMessage');
+    if (successMessage) {
+        showToast(successMessage, 'success');
+        localStorage.removeItem('successMessage');
+    }
+});
 
 $(document).ready(function () {
     const $addStudentForm = $('#add-student-form');
@@ -38,7 +46,8 @@ $(document).ready(function () {
         $addStudentForm.trigger('reset');
         $('#addStudentModal').modal('hide');
 
-        showToast('Student created successfully!', 'success');
+        localStorage.setItem('successMessage', 'Student created successfully!');
+        location.reload();
     }
 
     function handleApiErrors(xhr) {

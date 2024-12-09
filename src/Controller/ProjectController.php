@@ -109,7 +109,7 @@ class ProjectController extends AbstractController
         StudentServiceInterface $studentService,
     ): Response {
         $page = max(1, $request->query->getInt('page', 1));
-        $paginationData = $studentService->getPaginatedAndUnassignedStudents($page, 10);
+        $paginationData = $studentService->getPaginatedAndUnassignedStudents($page);
 
         return $this->render('project/status.html.twig', [
             'currentPage' => $page,

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container my-5">
+    <div id="status-page" class="container my-5" data-status-url="{{ path('app_project_status', {'id': project.id}) }}">
         <h1 class="mb-4">
             Project: <strong>{{ project.title }}</strong>
         </h1>
@@ -19,7 +19,7 @@
 
         <hr class="my-4">
 
-        <section>
+        <section id="students-container">
             <h3 class="mb-3">Students</h3>
             {% if project.groups is not empty %}
                 {% include 'student/student_list.html.twig' with { 'id': project.id, 'students': students } %}
@@ -44,7 +44,7 @@
 
         <hr class="my-4">
 
-        <section>
+        <section id="groups-container">
             <h3 class="mb-3">Groups</h3>
             <div class="row">
                 {% for group in project.groups %}
