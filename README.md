@@ -62,19 +62,21 @@ Built with Symfony 6.4, it uses OOP principles and supports RESTful APIs for som
 2. **Docker**
    - Build and start the Docker containers:
    ```bash
-     docker compose up -d
+     docker-compose up -d --build
      ```
-   or
-   ```bash
-     docker-compose up -d
-     ```
-     then
+   then
    ```bash
      docker exec -it app bash
      ```
 3. **Install Dependencies**
      ```bash
      composer install
+     ```
+    ```bash
+     npm install
+     ```
+    ```bash
+     npm run dev
      ```
 
 4. **Set Up the Database**

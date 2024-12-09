@@ -1,7 +1,7 @@
 FROM php:8.1-fpm
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y git
+RUN apt-get install -y git unzip zip p7zip-full curl
 RUN docker-php-ext-install mysqli pdo_mysql bcmath
 
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
