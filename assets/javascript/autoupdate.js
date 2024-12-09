@@ -5,6 +5,10 @@ $(document).ready(function () {
         const statusPageUrl = $statusPage.data('status-url');
 
         function fetchStatusUpdates() {
+            if ($('body').hasClass('modal-open')) {
+                return;
+            }
+
             $.ajax({
                 url: statusPageUrl,
                 type: 'GET',
